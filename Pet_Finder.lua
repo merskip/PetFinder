@@ -4,9 +4,12 @@ SlashCmdList.FIND_PETS = function(msg, editBox)
     local opponentPetTypes = { strsplit(" ", msg) }
 
     for index, opponentPetType in ipairs(opponentPetTypes) do
-        local opponentPetType = tonumber(opponentPetType)
+        local opponentPetType = parsePetType(opponentPetType)
+        if not opponentPetType then
+            return
+        end
 
-        print(format("Strong pets against %s:", PET_TYPE_SUFFIX[opponentPetType]))
+        print(format("Strong pets against %s:", getPetTypeName(opponentPetType)))
 
         local pets = findOwnedPetsAgainstPetType(opponentPetType)
         for index, ownedPetID in ipairs(pets) do

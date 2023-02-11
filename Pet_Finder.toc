@@ -5,3 +5,4 @@
 ## Author: Piotr Merski <merskip@gmail.com>
 
 Pet_Finder.lua
+parse_pet_type.lua
