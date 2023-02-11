@@ -6,3 +6,4 @@
 
 Pet_Finder.lua
 parse_pet_type.lua
+PetsResultsFrame.lua

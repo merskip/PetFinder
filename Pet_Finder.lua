@@ -11,36 +11,73 @@ SlashCmdList.FIND_PETS = function(msg, editBox)
         if not opponentPetType then
             return
         end
-        opponentPetTypes[index] = opponentPetType
+        table.insert(opponentPetTypes, opponentPetType)
     end
 
-    local petsAgainstOponentPetType = {}
-    for _, opponentPetType in ipairs(opponentPetTypes) do
-        local petsIDs = findOwnedPetsAgainstPetType(opponentPetType)
-        petsAgainstOponentPetType[opponentPetType] = petsIDs
-    end
+    local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
 
+    -- local petsAgainstOponentPetType = {}
+    -- for _, opponentPetType in ipairs(opponentPetTypes) do
+    --     local petsIDs = findOwnedPetsAgainstPetType(opponentPetType)
+    --     petsAgainstOponentPetType[opponentPetType] = petsIDs
+    -- end
+
+    -- for petLevel = 1,MAX_PET_LEVEL do
+    --     local resultPets = {}
+    --     local hasPetsForThisLevel = true
+    --     for _, opponentPetType in ipairs(opponentPetTypes) do
+    --         local petsOnThisLevel = filterPetsOnLevel(petsAgainstOponentPetType[opponentPetType], petLevel)
+    --         resultPets[opponentPetType] = petsOnThisLevel
+    --         if table.getn(petsOnThisLevel) == 0 then
+    --             hasPetsForThisLevel = false
+    --         end
+    --     end
+
+    --     if hasPetsForThisLevel then
+    --         print("= Pets for lebel", petLevel)
+    --         for opponentPetType, petsIDs in pairs(resultPets) do
+    --             print("pets against", getPetTypeName(opponentPetType))
+    --             for _, petID in ipairs(petsIDs) do
+    --                 print(" - ", C_PetJournal.GetBattlePetLink(petID))
+    --             end
+    --         end
+    --     end
+    -- end
+
+    local resultsPanel = CreatePetsRetuls(result)
+    resultsPanel:Show();
+end
+
+function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
+    local result = {}
     for petLevel = 1,MAX_PET_LEVEL do
-        local resultPets = {}
-        local hasPetsForThisLevel = true
+        local petLevelResult = {
+            petLevel = petLevel,
+            opponentPetTypes = {}
+        }
+
         for _, opponentPetType in ipairs(opponentPetTypes) do
-            local petsOnThisLevel = filterPetsOnLevel(petsAgainstOponentPetType[opponentPetType], petLevel)
-            resultPets[opponentPetType] = petsOnThisLevel
-            if table.getn(petsOnThisLevel) == 0 then
-                hasPetsForThisLevel = false
+            local petsIDs = findOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel)
+
+            if table.getn(petsIDs) > 0 then
+                table.insert(petLevelResult.opponentPetTypes, {
+                    opponentPetType = opponentPetType,
+                    petsIDs = petsIDs
+                })
             end
         end
 
-        if hasPetsForThisLevel then
-            print("= Pets for lebel", petLevel)
-            for opponentPetType, petsIDs in pairs(resultPets) do
-                print("pets against", getPetTypeName(opponentPetType))
-                for _, petID in ipairs(petsIDs) do
-                    print(" - ", C_PetJournal.GetBattlePetLink(petID))
-                end
-            end
+        if table.getn(petLevelResult.opponentPetTypes) == table.getn(opponentPetTypes) then
+            table.insert(result, petLevelResult)
         end
     end
+
+    return result
+end
+
+function findOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel)
+    local petsIDs = findOwnedPetsAgainstPetType(opponentPetType)
+    return filterPetsOnLevel(petsIDs, petLevel)
 end
 
 function findOwnedPetsAgainstPetType(opponentPetType)
@@ -49,7 +86,7 @@ function findOwnedPetsAgainstPetType(opponentPetType)
     local resultPets = {}
     for index = 1,ownNumPetsOwned do
         local petID = C_PetJournal.GetPetInfoByIndex(index)
-        if (isOwnedPetStrongAgainst(petID, opponentPetType)) then
+        if isOwnedPetStrongAgainst(petID, opponentPetType) then
             table.insert(resultPets, petID)
         end
     end
@@ -60,7 +97,7 @@ function isOwnedPetStrongAgainst(ownedPetID, opponentPetType)
     local petInfo = C_PetJournal.GetPetInfoTableByPetID(ownedPetID)
 
     -- Eg. Alliance/Horde balloon cannot battle, so can be skipped
-    if (not petInfo.canBattle) then
+    if not petInfo.canBattle then
         return false
     end
 
