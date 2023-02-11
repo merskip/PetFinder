@@ -1,20 +1,44 @@
+MAX_PET_LEVEL = 25
+
 SLASH_FIND_PETS1 = '/findpets'
 SLASH_FIND_PETS2 = '/fp'
 SlashCmdList.FIND_PETS = function(msg, editBox)
-    local opponentPetTypes = { strsplit(" ", msg) }
+    local arguments = { strsplit(" ", msg) }
 
-    for index, opponentPetType in ipairs(opponentPetTypes) do
+    local opponentPetTypes = {}
+    for index, opponentPetType in ipairs(arguments) do
         local opponentPetType = parsePetType(opponentPetType)
         if not opponentPetType then
             return
         end
+        opponentPetTypes[index] = opponentPetType
+    end
 
-        print(format("Strong pets against %s:", getPetTypeName(opponentPetType)))
+    local petsAgainstOponentPetType = {}
+    for _, opponentPetType in ipairs(opponentPetTypes) do
+        local petsIDs = findOwnedPetsAgainstPetType(opponentPetType)
+        petsAgainstOponentPetType[opponentPetType] = petsIDs
+    end
 
-        local pets = findOwnedPetsAgainstPetType(opponentPetType)
-        for index, ownedPetID in ipairs(pets) do
-            local petLink = C_PetJournal.GetBattlePetLink(ownedPetID)
-            print(format(" - %s", petLink))
+    for petLevel = 1,MAX_PET_LEVEL do
+        local resultPets = {}
+        local hasPetsForThisLevel = true
+        for _, opponentPetType in ipairs(opponentPetTypes) do
+            local petsOnThisLevel = filterPetsOnLevel(petsAgainstOponentPetType[opponentPetType], petLevel)
+            resultPets[opponentPetType] = petsOnThisLevel
+            if table.getn(petsOnThisLevel) == 0 then
+                hasPetsForThisLevel = false
+            end
+        end
+
+        if hasPetsForThisLevel then
+            print("= Pets for lebel", petLevel)
+            for opponentPetType, petsIDs in pairs(resultPets) do
+                print("pets against", getPetTypeName(opponentPetType))
+                for _, petID in ipairs(petsIDs) do
+                    print(" - ", C_PetJournal.GetBattlePetLink(petID))
+                end
+            end
         end
     end
 end
@@ -51,6 +75,17 @@ function isOwnedPetStrongAgainst(ownedPetID, opponentPetType)
         end
     end
     return false
+end
+
+function filterPetsOnLevel(petsIDs, level)
+    local resultPets = {}
+    for _, petID in ipairs(petsIDs) do
+        local petInfo = C_PetJournal.GetPetInfoTableByPetID(petID)
+        if petInfo.petLevel == level then
+            table.insert(resultPets, petID) 
+        end
+    end
+    return resultPets
 end
 
 --- Returns true when provided `petType` has attack bonus against `opponentPetType`
