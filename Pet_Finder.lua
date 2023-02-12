@@ -3,20 +3,50 @@ MAX_PET_LEVEL = 25
 SLASH_FIND_PETS1 = '/findpets'
 SLASH_FIND_PETS2 = '/fp'
 SlashCmdList.FIND_PETS = function(msg, editBox)
-    local arguments = { strsplit(" ", msg) }
-
-    local opponentPetTypes = {}
-    for index, opponentPetType in ipairs(arguments) do
-        local opponentPetType = parsePetType(opponentPetType)
-        if not opponentPetType then
-            return
-        end
-        table.insert(opponentPetTypes, opponentPetType)
+    local opponentPetTypes = GetOpponentPetTypesFromMSG(msg)
+    if opponentPetTypes == nil then
+        print("No set any pet types")
+        return
     end
 
     local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
     local resultsPanel = CreatePetsRetuls(result)
     resultsPanel:Show();
+end
+
+function GetOpponentPetTypesFromMSG(msg) 
+    if msg == "" then
+        return GetOpponentPetTypesFromPetBattle()
+    else
+        local arguments = { strsplit(" ", msg) }
+        return ParsePetTypesFromArguments(arguments)
+    end
+end
+
+function ParsePetTypesFromArguments(arguments)
+    local petTypes = {}
+    for _, petType in ipairs(arguments) do
+        local petType = parsePetType(petType)
+        if not petType then
+            return
+        end
+        table.insert(petTypes, petType)
+    end
+    return petTypes
+end
+
+function GetOpponentPetTypesFromPetBattle()
+    if not C_PetBattles.IsInBattle() then
+        return nil
+    end
+    local numerOfPets = C_PetBattles.GetNumPets(Enum.BattlePetOwner.Enemy)
+
+    local petTypes = {}
+    for petIndex = 1,numerOfPets do
+        local petType = C_PetBattles.GetPetType(Enum.BattlePetOwner.Enemy, petIndex)
+        table.insert(petTypes, petType)
+    end
+    return petTypes
 end
 
 function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
