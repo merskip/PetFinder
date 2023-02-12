@@ -107,8 +107,7 @@ function isOwnedPetStrongAgainst(ownedPetID, opponentPetType)
         local _, name, _, maxCooldown, _, _, petType, noStrongWeakHints = C_PetBattles.GetAbilityInfoByID(abilityLevelInfo.abilityID)
         -- Check if the pet has the required level and the ability is offensive
         if (petInfo.petLevel >= abilityLevelInfo.level and not noStrongWeakHints) then
-            -- Ability is strong when it hasn't cooldown and has bonus attack for opponent pet type
-            if maxCooldown == 0 and hasBonusAttack(petType, opponentPetType) then
+            if hasBonusAttack(petType, opponentPetType) then
                 return true
             end
         end
