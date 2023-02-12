@@ -19,7 +19,15 @@ function CreatePetsRetuls(petResults)
     scrollChild:SetWidth(480 - 18)
     scrollChild:SetHeight(1)
     scrollChild:SetHyperlinksEnabled(true)
-    scrollChild:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
+    scrollChild:SetScript("OnHyperlinkClick", function(self, link, text)
+        local linksParts = { strsplit(":", link) }
+        if linksParts[1] == "battlepet" then
+            local petID = linksParts[8]
+            OpenPetJournalWithPetID(petID)
+        else
+            ChatFrame_OnHyperlinkShow(self, link, text)
+        end
+    end)
 
     local lastElement = nil
     for _, levelResult in ipairs(petResults) do
@@ -51,4 +59,9 @@ function CreatePetsRetuls(petResults)
     end
 
     return panel
+end
+
+function OpenPetJournalWithPetID(petID)
+    SetCollectionsJournalShown(true, COLLECTIONS_JOURNAL_TAB_INDEX_PETS)    
+    PetJournal_SelectPet(PetJournal, petID)
 end

@@ -15,35 +15,6 @@ SlashCmdList.FIND_PETS = function(msg, editBox)
     end
 
     local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
-
-    -- local petsAgainstOponentPetType = {}
-    -- for _, opponentPetType in ipairs(opponentPetTypes) do
-    --     local petsIDs = findOwnedPetsAgainstPetType(opponentPetType)
-    --     petsAgainstOponentPetType[opponentPetType] = petsIDs
-    -- end
-
-    -- for petLevel = 1,MAX_PET_LEVEL do
-    --     local resultPets = {}
-    --     local hasPetsForThisLevel = true
-    --     for _, opponentPetType in ipairs(opponentPetTypes) do
-    --         local petsOnThisLevel = filterPetsOnLevel(petsAgainstOponentPetType[opponentPetType], petLevel)
-    --         resultPets[opponentPetType] = petsOnThisLevel
-    --         if table.getn(petsOnThisLevel) == 0 then
-    --             hasPetsForThisLevel = false
-    --         end
-    --     end
-
-    --     if hasPetsForThisLevel then
-    --         print("= Pets for lebel", petLevel)
-    --         for opponentPetType, petsIDs in pairs(resultPets) do
-    --             print("pets against", getPetTypeName(opponentPetType))
-    --             for _, petID in ipairs(petsIDs) do
-    --                 print(" - ", C_PetJournal.GetBattlePetLink(petID))
-    --             end
-    --         end
-    --     end
-    -- end
-
     local resultsPanel = CreatePetsRetuls(result)
     resultsPanel:Show();
 end
