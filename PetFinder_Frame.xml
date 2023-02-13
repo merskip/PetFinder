@@ -3,18 +3,23 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/.. \FrameXML\UI.xsd">
     <Script file="PetFinder_Frame.lua"/>
 
-    <Frame name="PetFinder_Frame" parent="UIParent" enableMouse="true" inherits="DefaultPanelTemplate" mixin="PetFinder_FrameMixin">
+    <Frame name="PetFinder_Frame" parent="UIParent"
+           enableMouse="true" movable="true"
+           inherits="DefaultPanelTemplate" mixin="PetFinder_FrameMixin">
          <Size>
             <AbsDimension x="360" y="240"/>
          </Size>
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
+
         <Frames>
         	<Button parentKey="CloseButton" inherits="UIPanelCloseButtonDefaultAnchors"/>
         </Frames>
         <Scripts>
-			<OnLoad method="OnLoad"/>
+            <OnLoad method="OnLoad"></OnLoad>
+            <OnDragStart>self:StartMoving();</OnDragStart>
+            <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
         </Scripts>
     </Frame>
 </Ui>
