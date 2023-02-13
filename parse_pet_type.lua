@@ -63,3 +63,11 @@ end
 function getPetTypeName(petType)
     return loadstring("return BATTLE_PET_NAME_" .. petType)()
 end
+
+function GetPetTypeTexture(petType)
+	if PET_TYPE_SUFFIX[petType] then
+		return "Interface\\PetBattles\\PetIcon-"..PET_TYPE_SUFFIX[petType];
+	else
+		return "Interface\\PetBattles\\PetIcon-NO_TYPE";
+	end
+end
