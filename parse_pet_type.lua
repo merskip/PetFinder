@@ -56,6 +56,14 @@ function parsePetType(petType)
     end
 end
 
+function GetPetTypesNames()
+    local names = {}
+    for i = 1, C_PetJournal.GetNumPetTypes() do
+        names[i] = getPetTypeName(i)
+    end
+    return names
+end
+
 function getPetTypePrefix(petType)
     return PET_TYPE_SUFFIX[petType]
 end
