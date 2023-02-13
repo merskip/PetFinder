@@ -4,6 +4,8 @@ function PetFinder_FrameMixin:OnLoad()
 	self:SetTitle("Pet Finder");
     self:RegisterForDrag("LeftButton");
 
+    self.withoutCooldown.Text:SetText("Without cooldown")
+
     UIDropDownMenu_Initialize(self.petType1, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType2, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType3, AddPetTypesToDropdown)
