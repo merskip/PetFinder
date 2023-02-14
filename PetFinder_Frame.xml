@@ -30,14 +30,14 @@
 
             <CheckButton name="$parentWithoutCooldown" parentKey="withoutCooldown" inherits="UICheckButtonTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentPetType3" relativePoint="BOTTOMLEFT" x="22" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentPetType3" relativePoint="BOTTOMLEFT" x="16" />
                 </Anchors>
             </CheckButton>
 
-            <Button name="$parentFind" text="Find" inherits="UIPanelButtonTemplate">
-                <Size x="100" y="24" />
+            <Button name="$parentFind" text="Find pets" inherits="UIPanelButtonTemplate">
+                <Size x="130" y="24" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentWithoutCooldown" relativePoint="BOTTOMLEFT" x="22" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentWithoutCooldown" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
                 <Scripts>
                     <OnClick>self:GetParent():FindOnClick()</OnClick>

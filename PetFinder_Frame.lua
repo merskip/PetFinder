@@ -3,8 +3,7 @@ PetFinder_FrameMixin = {};
 function PetFinder_FrameMixin:OnLoad()
 	self:SetTitle("Pet Finder");
     self:RegisterForDrag("LeftButton");
-
-    self.withoutCooldown.Text:SetText("Without cooldown")
+    self.withoutCooldown.Text:SetText("Ignore abilities\nwith cooldown")
 
     UIDropDownMenu_Initialize(self.petType1, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType2, AddPetTypesToDropdown)
@@ -15,7 +14,8 @@ function PetFinder_FrameMixin:FindOnClick()
     local petType1 = UIDropDownMenu_GetSelectedValue(self.petType1)
     local petType2 = UIDropDownMenu_GetSelectedValue(self.petType2)
     local petType3 = UIDropDownMenu_GetSelectedValue(self.petType3)
-    print("Find pets for...", petType1, petType2, petType3)
+    local ignoreAibilitesWithCooldown = self.withoutCooldown:GetChecked()
+    print("Find pets for...", petType1, petType2, petType3, ignoreAibilitesWithCooldown)
 end
 
 function AddPetTypesToDropdown(dropdownMenu)
