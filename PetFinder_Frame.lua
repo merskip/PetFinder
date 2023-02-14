@@ -8,6 +8,13 @@ function PetFinder_FrameMixin:OnLoad()
     UIDropDownMenu_Initialize(self.petType1, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType2, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType3, AddPetTypesToDropdown)
+
+
+    local view = CreateScrollBoxListLinearView();
+    view:SetElementInitializer("PetFinder_PetListButtonTemplate", function(button, elementData)
+        button:Init(elementData)
+    end);
+	ScrollUtil.InitScrollBoxListWithScrollBar(self.results.scrollBox, self.results.scrollBar, view);
 end
 
 function PetFinder_FrameMixin:FindOnClick()
@@ -32,6 +39,8 @@ function PetFinder_FrameMixin:FindOnClick()
 
     local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
 
+    local dataProvider = CreateDataProvider();
+
     for _, levelResult in ipairs(result) do
         print("Level ".. levelResult.petLevel)
 
@@ -41,9 +50,13 @@ function PetFinder_FrameMixin:FindOnClick()
             for _, petID in pairs(levelResult.petsIDs) do
                 local petLink = C_PetJournal.GetBattlePetLink(petID)
                 print(" - ", petLink)
+
+		        dataProvider:Insert(petID);
             end
         end
     end
+
+	self.results.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 end
 
 
@@ -58,4 +71,16 @@ function AddPetTypesToDropdown(dropdownMenu)
         end
         UIDropDownMenu_AddButton(info)
     end
+end
+
+PetListButtonMixin = {};
+
+function PetListButtonMixin:Init(petID)
+    self.petID = petID
+    local petLink = C_PetJournal.GetBattlePetLink(petID)
+    self:SetText(petLink)
+end
+
+function PetListButtonMixin:OnClick()
+    OpenPetJournalWithPetID(self.petID)
 end

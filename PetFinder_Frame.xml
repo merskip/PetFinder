@@ -2,8 +2,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/.. \FrameXML\UI.xsd">
     <Script file="PetFinder_Frame.lua"/>
 
+
+    <Button name="PetFinder_PetListButtonTemplate" virtual="true" inherits="UIPanelButtonTemplate" mixin="PetListButtonMixin">
+        <Size x="250" y="24"/>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Scripts>
+            <OnClick method="OnClick" />
+        </Scripts>
+    </Button>
+
     <Frame name="PetFinder_Frame" parent="UIParent" enableMouse="true" movable="true" inherits="DefaultPanelTemplate" mixin="PetFinder_FrameMixin">
-        <Size x="360" y="240" />
+        <Size x="640" y="480" />
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
@@ -43,6 +54,29 @@
                     <OnClick>self:GetParent():FindOnClick()</OnClick>
                 </Scripts>
             </Button>
+
+            <Frame name="$parentResults" parentKey="results">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="160" y="-22" />
+                    <Anchor point="BOTTOM" x="0" />
+                    <Anchor point="RIGHT" x="0" />
+                </Anchors>
+                <Frames>
+                    <Frame parentKey="scrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.LeftInset" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LeftInset"/>
+                        </Anchors>
+                    </Frame>
+
+                    <EventFrame parentKey="scrollBar" inherits="WowTrimScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.scrollBox" relativePoint="TOPRIGHT"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.scrollBox" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
+            </Frame>
         </Frames>
         <Scripts>
             <OnLoad method="OnLoad"></OnLoad>
