@@ -11,8 +11,7 @@ function PetFinder_FrameMixin:OnLoad()
 
 
     local view = CreateScrollBoxListLinearView();
-
-
+    view:SetPadding(16, 16, 0, 4, 4);
     view:SetElementFactory(function(factory, elementData)
         if elementData.petLevel then
             factory("PetFinder_PetListLevelHeaderTemplate", PetListLevelHeaderTemplate_Init);
@@ -20,7 +19,7 @@ function PetFinder_FrameMixin:OnLoad()
             factory("PetFinder_PetListPetTypeHeaderTemplate", PetListPetTypeHeaderTemplate_Init);
         else
             factory("PetFinder_PetListButtonTemplate", function(button, elementData)
-                button:Init(elementData)
+                button:Init(button, elementData)
             end);
         end
     end);
@@ -83,10 +82,42 @@ end
 
 PetListButtonMixin = {};
 
-function PetListButtonMixin:Init(petID)
-    self.petID = petID
-    local petLink = C_PetJournal.GetBattlePetLink(petID)
-    self:SetText(petLink)
+function PetListButtonMixin:Init(pet, petID)
+    pet.petID = petID
+    
+    local _, customName, level, _, _, _, _, name, icon, petType = C_PetJournal.GetPetInfoByPetID(petID);
+
+	if customName then
+		pet.name:SetText(customName);
+		pet.name:SetHeight(12);
+		pet.subName:Show();
+		pet.subName:SetText(name);
+	else
+		pet.name:SetText(name);
+		pet.name:SetHeight(30);
+		pet.subName:Hide();
+	end
+
+    pet.icon:SetTexture(icon);
+	pet.petTypeIcon:SetTexture(GetPetTypeTexture(petType));
+
+    local health, _, _, _, rarity = C_PetJournal.GetPetStats(petID);
+
+    pet.dragButton.level:SetText(level);
+
+    pet.icon:SetDesaturated(false);
+    pet.name:SetFontObject("GameFontNormal");
+    pet.dragButton:Enable();
+    pet.iconBorder:Show();
+    
+    local qualityColor = ITEM_QUALITY_COLORS[rarity-1]
+    pet.iconBorder:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b);
+
+    if (health and health <= 0) then
+        pet.isDead:Show();
+    else
+        pet.isDead:Hide();
+    end
 end
 
 function PetListButtonMixin:OnClick()

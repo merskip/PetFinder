@@ -4,16 +4,16 @@
 
 
     <Frame name="PetFinder_PetListLevelHeaderTemplate" virtual="true">
-        <Size y="24"/>
+        <Size y="32"/>
         <Layers>
             <Layer level="ARTWORK">
-                <FontString parentKey="title" inherits="GameFontNormal" />
+                <FontString parentKey="title" inherits="GameFontNormalLarge" />
             </Layer>
         </Layers>
     </Frame>
 
     <Frame name="PetFinder_PetListPetTypeHeaderTemplate" virtual="true">
-        <Size y="24"/>
+        <Size y="16"/>
         <Layers>
             <Layer level="ARTWORK">
                 <FontString parentKey="title" inherits="GameFontWhite" />
@@ -21,11 +21,84 @@
         </Layers>
     </Frame>
 
-    <Button name="PetFinder_PetListButtonTemplate" virtual="true" inherits="UIPanelButtonTemplate" mixin="PetListButtonMixin">
-        <Size x="250" y="24"/>
-        <Anchors>
-            <Anchor point="CENTER"/>
-        </Anchors>
+    <Button name="PetFinder_PetListButtonTemplate" virtual="true" mixin="PetListButtonMixin">
+        <Size x="208" y="38"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" atlas="PetList-ButtonBackground"/>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="icon">
+                    <Size x="38" y="38"/>
+                    <Anchors>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="petTypeIcon">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                    <Size x="80" y="38"/>
+                    <TexCoords left="0.00781250" right="0.71093750" top="0.74609375" bottom="0.91796875"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture parentKey="iconBorder" file="Interface\Common\WhiteIconFrame" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.icon"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.icon"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <FontString inherits="GameFontNormal" justifyH="LEFT" parentKey="name">
+                    <Size x="147" y="25"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeKey="$parent.icon" x="10" y="-3"/>
+                    </Anchors>
+                </FontString>
+                <FontString inherits="GameFontNormalSmall" justifyH="LEFT" parentKey="subName">
+                    <Size x="147" y="12"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.name" x="0" y="-4"/>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="1"/>
+                </FontString>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="isDead" file="Interface\PetBattles\DeadPetIcon" hidden="true">
+                    <Size x="38" y="38"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER"/>
+                    </Anchors>
+                </Texture>
+                <Texture atlas="PetList-ButtonSelect" parentKey="selectedTexture" hidden="true"/>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="dragButton">
+                <Size x="40" y="40"/>
+                <Anchors>
+                    <Anchor point="CENTER" relativeKey="$parent.icon"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="1">
+                        <Texture atlas="PetJournal-LevelBubble" useAtlasSize="true" parentKey="levelBG">
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.icon" x="3" y="-3"/>
+                            </Anchors>
+                        </Texture>
+                        <FontString name="$parentLevel" inherits="GameFontNormalSmall" justifyH="CENTER" parentKey="level">
+                            <Size x="0" y="12"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.levelBG" x="1" y="-1"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+        <HighlightTexture atlas="PetList-ButtonHighlight"/>
         <Scripts>
             <OnClick method="OnClick" />
         </Scripts>
