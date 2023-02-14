@@ -11,9 +11,20 @@ function PetFinder_FrameMixin:OnLoad()
 
 
     local view = CreateScrollBoxListLinearView();
-    view:SetElementInitializer("PetFinder_PetListButtonTemplate", function(button, elementData)
-        button:Init(elementData)
+
+
+    view:SetElementFactory(function(factory, elementData)
+        if elementData.petLevel then
+            factory("PetFinder_PetListLevelHeaderTemplate", PetListLevelHeaderTemplate_Init);
+        elseif elementData.petType then
+            factory("PetFinder_PetListPetTypeHeaderTemplate", PetListPetTypeHeaderTemplate_Init);
+        else
+            factory("PetFinder_PetListButtonTemplate", function(button, elementData)
+                button:Init(elementData)
+            end);
+        end
     end);
+
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.results.scrollBox, self.results.scrollBar, view);
 end
 
@@ -42,15 +53,12 @@ function PetFinder_FrameMixin:FindOnClick()
     local dataProvider = CreateDataProvider();
 
     for _, levelResult in ipairs(result) do
-        print("Level ".. levelResult.petLevel)
+        dataProvider:Insert({petLevel = levelResult.petLevel});
 
-        for _, levelResult in ipairs(levelResult.opponentPetTypes) do
-            print("Pets against " .. getPetTypeName(levelResult.opponentPetType))
+        for _, petTypeResult in ipairs(levelResult.opponentPetTypes) do
+            dataProvider:Insert({petType = petTypeResult.opponentPetType});
 
-            for _, petID in pairs(levelResult.petsIDs) do
-                local petLink = C_PetJournal.GetBattlePetLink(petID)
-                print(" - ", petLink)
-
+            for _, petID in pairs(petTypeResult.petsIDs) do
 		        dataProvider:Insert(petID);
             end
         end
@@ -83,4 +91,12 @@ end
 
 function PetListButtonMixin:OnClick()
     OpenPetJournalWithPetID(self.petID)
+end
+
+function PetListLevelHeaderTemplate_Init(button, elementData)
+    button.title:SetText("Level " .. elementData.petLevel)
+end
+
+function PetListPetTypeHeaderTemplate_Init(button, elementData)
+    button.title:SetText("Pets against " .. getPetTypeName(elementData.petType))
 end

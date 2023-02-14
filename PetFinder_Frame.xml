@@ -3,6 +3,24 @@
     <Script file="PetFinder_Frame.lua"/>
 
 
+    <Frame name="PetFinder_PetListLevelHeaderTemplate" virtual="true">
+        <Size y="24"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="title" inherits="GameFontNormal" />
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <Frame name="PetFinder_PetListPetTypeHeaderTemplate" virtual="true">
+        <Size y="24"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="title" inherits="GameFontWhite" />
+            </Layer>
+        </Layers>
+    </Frame>
+
     <Button name="PetFinder_PetListButtonTemplate" virtual="true" inherits="UIPanelButtonTemplate" mixin="PetListButtonMixin">
         <Size x="250" y="24"/>
         <Anchors>
@@ -71,7 +89,7 @@
 
                     <EventFrame parentKey="scrollBar" inherits="WowTrimScrollBar">
                         <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP"/>
+                            <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP"/>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                     </EventFrame>
