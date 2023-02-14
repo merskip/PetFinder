@@ -6,7 +6,6 @@
 
 PetFinder.lua
 parse_pet_type.lua
-PetsResultsFrame.lua
 
 PetFinder_Frame.lua
 PetFinder_Frame.xml

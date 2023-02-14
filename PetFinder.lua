@@ -4,12 +4,7 @@ SLASH_FIND_PETS1 = '/findpets'
 SLASH_FIND_PETS2 = '/fp'
 SlashCmdList.FIND_PETS = function(msg, editBox)
     local opponentPetTypes = GetOpponentPetTypesFromMSG(msg)
-    if opponentPetTypes == nil then
-        print("No set any pet types")
-        return
-    end
-
-    PetFinder_Frame:ShowWithPetTypes(opponentPetTypes)
+    PetFinder_Frame:ShowWithPetTypes(opponentPetTypes or {})
 end
 
 function GetOpponentPetTypesFromMSG(msg) 
@@ -45,6 +40,11 @@ function GetOpponentPetTypesFromPetBattle()
         table.insert(petTypes, petType)
     end
     return petTypes
+end
+
+function OpenPetJournalWithPetID(petID)
+    SetCollectionsJournalShown(true, COLLECTIONS_JOURNAL_TAB_INDEX_PETS)    
+    PetJournal_SelectPet(PetJournal, petID)
 end
 
 function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)

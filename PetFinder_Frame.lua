@@ -34,13 +34,18 @@ function PetFinder_FrameMixin:ShowWithPetTypes(opponentPetTypes)
     self:SetSelectedPetType(2, opponentPetTypes[2])
     self:SetSelectedPetType(3, opponentPetTypes[3])
     self:Show()
+    self:FindOnClick()
 end
 
 function PetFinder_FrameMixin:SetSelectedPetType(index, petType)
     local dropdown = self["petType" .. index]
     UIDropDownMenu_SetSelectedValue(dropdown, petType)
-     -- Workaround for https://www.mmo-champion.com/threads/2043081-LUA-UIDropDownMenu-set-selected-value-at-initialization
-    UIDropDownMenu_SetText(dropdown, getPetTypeName(petType))
+    if petType then
+        -- Workaround for https://www.mmo-champion.com/threads/2043081-LUA-UIDropDownMenu-set-selected-value-at-initialization
+        UIDropDownMenu_SetText(dropdown, getPetTypeName(petType))
+    else
+        UIDropDownMenu_SetText(dropdown, "")
+    end
 end
 
 function PetFinder_FrameMixin:FindOnClick()
