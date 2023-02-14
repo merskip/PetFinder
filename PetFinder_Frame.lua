@@ -1,6 +1,7 @@
 PetFinder_FrameMixin = {};
 
 function PetFinder_FrameMixin:OnLoad()
+    print("LOAD")
 	self:SetTitle("Pet Finder");
     self:RegisterForDrag("LeftButton");
     self.withoutCooldown.Text:SetText("Ignore abilities\nwith cooldown")
@@ -9,6 +10,7 @@ function PetFinder_FrameMixin:OnLoad()
     UIDropDownMenu_Initialize(self.petType2, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType3, AddPetTypesToDropdown)
 
+    self.withoutCooldown:SetChecked(true)
 
     local view = CreateScrollBoxListLinearView();
     view:SetPadding(16, 16, 0, 4, 4);
@@ -25,6 +27,20 @@ function PetFinder_FrameMixin:OnLoad()
     end);
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.results.scrollBox, self.results.scrollBar, view);
+end
+
+function PetFinder_FrameMixin:ShowWithPetTypes(opponentPetTypes)
+    self:SetSelectedPetType(1, opponentPetTypes[1])
+    self:SetSelectedPetType(2, opponentPetTypes[2])
+    self:SetSelectedPetType(3, opponentPetTypes[3])
+    self:Show()
+end
+
+function PetFinder_FrameMixin:SetSelectedPetType(index, petType)
+    local dropdown = self["petType" .. index]
+    UIDropDownMenu_SetSelectedValue(dropdown, petType)
+     -- Workaround for https://www.mmo-champion.com/threads/2043081-LUA-UIDropDownMenu-set-selected-value-at-initialization
+    UIDropDownMenu_SetText(dropdown, getPetTypeName(petType))
 end
 
 function PetFinder_FrameMixin:FindOnClick()
@@ -68,11 +84,11 @@ end
 
 
 function AddPetTypesToDropdown(dropdownMenu)
-    local petTypes = GetPetTypesNames()
-    for i, petType in ipairs(petTypes) do
+    local petTypesNames = GetPetTypesNames()
+    for petType, petTypeName in ipairs(petTypesNames) do
         local info = UIDropDownMenu_CreateInfo()
-        info.text = petType
-        info.value = i
+        info.text = petTypeName
+        info.value = petType
         info.func = function(self)
             UIDropDownMenu_SetSelectedValue(dropdownMenu, self.value)
         end

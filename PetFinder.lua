@@ -9,9 +9,7 @@ SlashCmdList.FIND_PETS = function(msg, editBox)
         return
     end
 
-    local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
-    local resultsPanel = CreatePetsRetuls(result)
-    resultsPanel:Show();
+    PetFinder_Frame:ShowWithPetTypes(opponentPetTypes)
 end
 
 function GetOpponentPetTypesFromMSG(msg) 

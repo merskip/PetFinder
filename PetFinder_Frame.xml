@@ -104,7 +104,7 @@
         </Scripts>
     </Button>
 
-    <Frame name="PetFinder_Frame" parent="UIParent" enableMouse="true" movable="true" inherits="DefaultPanelTemplate" mixin="PetFinder_FrameMixin">
+    <Frame name="PetFinder_Frame" parent="UIParent" hidden="true" enableMouse="true" movable="true" inherits="DefaultPanelTemplate" mixin="PetFinder_FrameMixin">
         <Size x="640" y="480" />
         <Anchors>
             <Anchor point="CENTER"/>
