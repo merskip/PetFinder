@@ -15,8 +15,37 @@ function PetFinder_FrameMixin:FindOnClick()
     local petType2 = UIDropDownMenu_GetSelectedValue(self.petType2)
     local petType3 = UIDropDownMenu_GetSelectedValue(self.petType3)
     local ignoreAibilitesWithCooldown = self.withoutCooldown:GetChecked()
-    print("Find pets for...", petType1, petType2, petType3, ignoreAibilitesWithCooldown)
+
+    local opponentPetTypes = {}
+    if petType1 then
+        table.insert(opponentPetTypes, petType1)
+    end
+    if petType2 then
+        table.insert(opponentPetTypes, petType2)
+    end
+    if petType3 then
+        table.insert(opponentPetTypes, petType3)
+    end
+    if table.getn(opponentPetTypes) == 0 then
+        return
+    end
+
+    local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
+
+    for _, levelResult in ipairs(result) do
+        print("Level ".. levelResult.petLevel)
+
+        for _, levelResult in ipairs(levelResult.opponentPetTypes) do
+            print("Pets against " .. getPetTypeName(levelResult.opponentPetType))
+
+            for _, petID in pairs(levelResult.petsIDs) do
+                local petLink = C_PetJournal.GetBattlePetLink(petID)
+                print(" - ", petLink)
+            end
+        end
+    end
 end
+
 
 function AddPetTypesToDropdown(dropdownMenu)
     local petTypes = GetPetTypesNames()
