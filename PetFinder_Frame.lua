@@ -1,7 +1,6 @@
 PetFinder_FrameMixin = {};
 
 function PetFinder_FrameMixin:OnLoad()
-    print("LOAD")
 	self:SetTitle("Pet Finder");
     self:RegisterForDrag("LeftButton");
     self.withoutCooldown.Text:SetText("Ignore abilities\nwith cooldown")
@@ -68,10 +67,8 @@ function PetFinder_FrameMixin:FindOnClick()
         return
     end
 
-    local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
-
+    local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWithCooldown)
     local dataProvider = CreateDataProvider();
-
     for _, levelResult in ipairs(result) do
         dataProvider:Insert({petLevel = levelResult.petLevel});
 
@@ -83,7 +80,6 @@ function PetFinder_FrameMixin:FindOnClick()
             end
         end
     end
-
 	self.results.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 end
 

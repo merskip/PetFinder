@@ -47,7 +47,7 @@ function OpenPetJournalWithPetID(petID)
     PetJournal_SelectPet(PetJournal, petID)
 end
 
-function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
+function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWithCooldown)
     local result = {}
     for petLevel = 1,MAX_PET_LEVEL do
         local petLevelResult = {
@@ -56,7 +56,7 @@ function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
         }
 
         for _, opponentPetType in ipairs(opponentPetTypes) do
-            local petsIDs = findOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel)
+            local petsIDs = findOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel, ignoreAibilitesWithCooldown)
 
             if table.getn(petsIDs) > 0 then
                 table.insert(petLevelResult.opponentPetTypes, {
@@ -74,25 +74,25 @@ function findOwnedPetsAgainstOponentPetTypes(opponentPetTypes)
     return result
 end
 
-function findOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel)
-    local petsIDs = findOwnedPetsAgainstPetType(opponentPetType)
+function findOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel, ignoreAibilitesWithCooldown)
+    local petsIDs = findOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
     return filterPetsOnLevel(petsIDs, petLevel)
 end
 
-function findOwnedPetsAgainstPetType(opponentPetType)
+function findOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
     local _, ownNumPetsOwned = C_PetJournal.GetNumPets()
 
     local resultPets = {}
     for index = 1,ownNumPetsOwned do
         local petID = C_PetJournal.GetPetInfoByIndex(index)
-        if isOwnedPetStrongAgainst(petID, opponentPetType) then
+        if isOwnedPetStrongAgainst(petID, opponentPetType, ignoreAibilitesWithCooldown) then
             table.insert(resultPets, petID)
         end
     end
     return resultPets
 end
 
-function isOwnedPetStrongAgainst(ownedPetID, opponentPetType)
+function isOwnedPetStrongAgainst(ownedPetID, opponentPetType, ignoreAibilitesWithCooldown)
     local petInfo = C_PetJournal.GetPetInfoTableByPetID(ownedPetID)
 
     -- Eg. Alliance/Horde balloon cannot battle, so can be skipped
@@ -101,16 +101,28 @@ function isOwnedPetStrongAgainst(ownedPetID, opponentPetType)
     end
 
     local ability = C_PetJournal.GetPetAbilityListTable(petInfo.speciesID)
-    for index, abilityLevelInfo in ipairs(ability) do
-        local _, name, _, maxCooldown, _, _, petType, noStrongWeakHints = C_PetBattles.GetAbilityInfoByID(abilityLevelInfo.abilityID)
-        -- Check if the pet has the required level and the ability is offensive
-        if (petInfo.petLevel >= abilityLevelInfo.level and not noStrongWeakHints) then
-            if hasBonusAttack(petType, opponentPetType) then
-                return true
-            end
+    for _, abilityInfo in ipairs(ability) do
+        if IsAbilityStrong(petInfo.petLevel, opponentPetType, abilityInfo, ignoreAibilitesWithCooldown) then
+            return true
         end
     end
     return false
+end
+
+function IsAbilityStrong(petLevel, opponentPetType, abilityInfo, ignoreAibilitesWithCooldown)
+    local _, name, _, maxCooldown, _, _, petType, noStrongWeakHints = C_PetBattles.GetAbilityInfoByID(abilityInfo.abilityID)
+
+    -- Check if the pet has the required level and the ability is offensive
+    if petLevel < abilityInfo.level or noStrongWeakHints then
+        return false
+    end
+
+    -- Skip abilities with cooldown when the flag is set
+    if ignoreAibilitesWithCooldown and maxCooldown ~= 0 then
+        return false
+    end
+
+    return hasBonusAttack(petType, opponentPetType)
 end
 
 function filterPetsOnLevel(petsIDs, level)
