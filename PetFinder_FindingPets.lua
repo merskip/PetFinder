@@ -1,18 +1,22 @@
--- Returns structure:
--- [
---  {
---    opponentPetType: {number} - pet type
---    petsIDs: [GUID]
---  }
--- ]
+-- Returns:
+-- [{
+--     petLevel: number
+--     opponentPetTypes: [{
+--         petType: number(petType)
+--         pets: [{
+--             petID: number(GUID)
+--             strongAbilities: [number(abbilityID)]
+--         }]
+--     }]
+-- }]
 function FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWithCooldown)
-    local result = {}
 
-    local petsIDsAgainstPetType = {}
+    local petsAgainstPetType = {}
     for _, opponentPetType in ipairs(opponentPetTypes) do
-        petsIDsAgainstPetType[opponentPetType] = FindOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
+        petsAgainstPetType[opponentPetType] = FindOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
     end
 
+    local result = {}
     for petLevel = 1,MAX_PET_LEVEL do
         local petLevelResult = {
             petLevel = petLevel,
@@ -20,12 +24,11 @@ function FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWi
         }
 
         for _, opponentPetType in ipairs(opponentPetTypes) do
-            local petsIDs = FilterPetsOnLevel(petsIDsAgainstPetType[opponentPetType], petLevel)
-
-            if #petsIDs > 0 then
+            local pets = FilterPetsOnLevel(petsAgainstPetType[opponentPetType], petLevel)
+            if #pets > 0 then
                 table.insert(petLevelResult.opponentPetTypes, {
-                    opponentPetType = opponentPetType,
-                    petsIDs = petsIDs
+                    petType = opponentPetType,
+                    pets = pets
                 })
             end
         end
@@ -34,39 +37,49 @@ function FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWi
             table.insert(result, petLevelResult)
         end
     end
-
     return result
 end
 
--- Retuns: [GUID]
+-- Retuns:
+-- [{
+--     petID: number(GUID)
+--     strongAbilities: [number(abbilityID)]
+-- }]
 function FindOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
     local _, ownNumPetsOwned = C_PetJournal.GetNumPets()
 
     local resultPets = {}
     for index = 1,ownNumPetsOwned do
         local petID = C_PetJournal.GetPetInfoByIndex(index)
-        if IsOwnedPetStrongAgainst(petID, opponentPetType, ignoreAibilitesWithCooldown) then
-            table.insert(resultPets, petID)
+        local strongAbilities = GetStrongAbilitiesAgainst(petID, opponentPetType, ignoreAibilitesWithCooldown)
+        if #strongAbilities ~= 0 then
+            table.insert(resultPets, {
+                petID = petID,
+                strongAbilities = strongAbilities
+            })
         end
     end
     return resultPets
 end
 
-function IsOwnedPetStrongAgainst(ownedPetID, opponentPetType, ignoreAibilitesWithCooldown)
+-- returns:
+-- [number(abbilityID)]
+function GetStrongAbilitiesAgainst(ownedPetID, opponentPetType, ignoreAibilitesWithCooldown)
     local petInfo = C_PetJournal.GetPetInfoTableByPetID(ownedPetID)
 
     -- Eg. Alliance/Horde balloon cannot battle, so can be skipped
     if not petInfo.canBattle then
-        return false
+        return {}
     end
 
+    local strongAbilities = {}
     local ability = C_PetJournal.GetPetAbilityListTable(petInfo.speciesID)
     for _, abilityInfo in ipairs(ability) do
         if IsAbilityStrong(petInfo.petLevel, opponentPetType, abilityInfo, ignoreAibilitesWithCooldown) then
-            return true
+            table.insert(strongAbilities, abilityInfo.abilityID)
         end
     end
-    return false
+    return strongAbilities
 end
 
 function IsAbilityStrong(petLevel, opponentPetType, abilityInfo, ignoreAibilitesWithCooldown)
@@ -85,12 +98,13 @@ function IsAbilityStrong(petLevel, opponentPetType, abilityInfo, ignoreAibilites
     return HasBonusAttack(petType, opponentPetType)
 end
 
-function FilterPetsOnLevel(petsIDs, level)
+function FilterPetsOnLevel(pets, level)
     local resultPets = {}
-    for _, petID in ipairs(petsIDs) do
-        local petInfo = C_PetJournal.GetPetInfoTableByPetID(petID)
+    for _, pet in ipairs(pets) do
+        local petInfo = C_PetJournal.GetPetInfoTableByPetID(pet.petID)
+
         if petInfo.petLevel == level then
-            table.insert(resultPets, petID) 
+            table.insert(resultPets, pet) 
         end
     end
     return resultPets

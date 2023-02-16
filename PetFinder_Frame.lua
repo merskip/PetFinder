@@ -74,10 +74,10 @@ function PetFinder_FrameMixin:FindOnClick()
         dataProvider:Insert({petLevel = levelResult.petLevel});
 
         for _, petTypeResult in ipairs(levelResult.opponentPetTypes) do
-            dataProvider:Insert({petType = petTypeResult.opponentPetType});
+            dataProvider:Insert({petType = petTypeResult.petType});
 
-            for _, petID in pairs(petTypeResult.petsIDs) do
-		        dataProvider:Insert(petID);
+            for _, pets in pairs(petTypeResult.pets) do
+		        dataProvider:Insert(pets);
             end
         end
     end
@@ -100,41 +100,42 @@ end
 
 PetListButtonMixin = {};
 
-function PetListButtonMixin:Init(pet, petID)
-    pet.petID = petID
+function PetListButtonMixin:Init(self, pet)
+    self.petID = pet.petID
+    self.strongAbilities = pet.strongAbilities
     
-    local _, customName, level, _, _, _, _, name, icon, petType = C_PetJournal.GetPetInfoByPetID(petID);
+    local _, customName, level, _, _, _, _, name, icon, petType = C_PetJournal.GetPetInfoByPetID(pet.petID);
 
 	if customName then
-		pet.name:SetText(customName);
-		pet.name:SetHeight(12);
-		pet.subName:Show();
-		pet.subName:SetText(name);
+		self.name:SetText(customName);
+		self.name:SetHeight(12);
+		self.subName:Show();
+		self.subName:SetText(name);
 	else
-		pet.name:SetText(name);
-		pet.name:SetHeight(30);
-		pet.subName:Hide();
+		self.name:SetText(name);
+		self.name:SetHeight(30);
+		self.subName:Hide();
 	end
 
-    pet.icon:SetTexture(icon);
-	pet.petTypeIcon:SetTexture(GetPetTypeTexture(petType));
+    self.icon:SetTexture(icon);
+	self.petTypeIcon:SetTexture(GetPetTypeTexture(petType));
 
-    local health, _, _, _, rarity = C_PetJournal.GetPetStats(petID);
+    local health, _, _, _, rarity = C_PetJournal.GetPetStats(pet.petID);
 
-    pet.dragButton.level:SetText(level);
+    self.dragButton.level:SetText(level);
 
-    pet.icon:SetDesaturated(false);
-    pet.name:SetFontObject("GameFontNormal");
-    pet.dragButton:Enable();
-    pet.iconBorder:Show();
+    self.icon:SetDesaturated(false);
+    self.name:SetFontObject("GameFontNormal");
+    self.dragButton:Enable();
+    self.iconBorder:Show();
     
     local qualityColor = ITEM_QUALITY_COLORS[rarity-1]
-    pet.iconBorder:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b);
+    self.iconBorder:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b);
 
     if (health and health <= 0) then
-        pet.isDead:Show();
+        self.isDead:Show();
     else
-        pet.isDead:Hide();
+        self.isDead:Hide();
     end
 end
 
