@@ -1,6 +1,18 @@
-
+-- Returns structure:
+-- [
+--  {
+--    opponentPetType: {number} - pet type
+--    petsIDs: [GUID]
+--  }
+-- ]
 function FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWithCooldown)
     local result = {}
+
+    local petsIDsAgainstPetType = {}
+    for _, opponentPetType in ipairs(opponentPetTypes) do
+        petsIDsAgainstPetType[opponentPetType] = FindOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
+    end
+
     for petLevel = 1,MAX_PET_LEVEL do
         local petLevelResult = {
             petLevel = petLevel,
@@ -8,8 +20,7 @@ function FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWi
         }
 
         for _, opponentPetType in ipairs(opponentPetTypes) do
-            -- TODO: Optimalize
-            local petsIDs = FindOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel, ignoreAibilitesWithCooldown)
+            local petsIDs = FilterPetsOnLevel(petsIDsAgainstPetType[opponentPetType], petLevel)
 
             if #petsIDs > 0 then
                 table.insert(petLevelResult.opponentPetTypes, {
@@ -27,11 +38,7 @@ function FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWi
     return result
 end
 
-function FindOwnedPetsAgainstPetTypeOnPetLevel(opponentPetType, petLevel, ignoreAibilitesWithCooldown)
-    local petsIDs = FindOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
-    return FilterPetsOnLevel(petsIDs, petLevel)
-end
-
+-- Retuns: [GUID]
 function FindOwnedPetsAgainstPetType(opponentPetType, ignoreAibilitesWithCooldown)
     local _, ownNumPetsOwned = C_PetJournal.GetNumPets()
 
