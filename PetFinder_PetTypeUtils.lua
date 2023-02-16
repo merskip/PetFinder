@@ -5,7 +5,7 @@
 --- explicit as string: "8"     -> 8
 --- explicit as number:  8      -> 8
 --- uknown type:                -> nil
-function parsePetType(petType)
+function ParsePetType(petType)
     local petType = strlower(petType)
     local numberOfPetTypes = C_PetJournal.GetNumPetTypes()
 
@@ -23,8 +23,8 @@ function parsePetType(petType)
     local matchedPetTypes = {}
     for petTypeIndex = 1,numberOfPetTypes do
         -- Pet type suffix and name can be different, eg. Water and Aquatic
-        local petTypePrefix = getPetTypePrefix(petTypeIndex)
-        local petTypeName = getPetTypeName(petTypeIndex)
+        local petTypePrefix = GetPetTypePrefix(petTypeIndex)
+        local petTypeName = GetPetTypeName(petTypeIndex)
 
         -- ...check if passed `petType` is prefix of the pet type
         if strlower(petTypeName):sub(1, #petType) == petType then
@@ -40,7 +40,7 @@ function parsePetType(petType)
         end
     end
 
-    local numerOfMatchedPetTypes = table.getn(matchedPetTypes)
+    local numerOfMatchedPetTypes = #matchedPetTypes
     if numerOfMatchedPetTypes == 0 then
         print("Not found pet type", petType)
         return nil
@@ -59,16 +59,16 @@ end
 function GetPetTypesNames()
     local names = {}
     for i = 1, C_PetJournal.GetNumPetTypes() do
-        names[i] = getPetTypeName(i)
+        names[i] = GetPetTypeName(i)
     end
     return names
 end
 
-function getPetTypePrefix(petType)
+function GetPetTypePrefix(petType)
     return PET_TYPE_SUFFIX[petType]
 end
 
-function getPetTypeName(petType)
+function GetPetTypeName(petType)
     return loadstring("return BATTLE_PET_NAME_" .. petType)()
 end
 

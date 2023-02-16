@@ -5,7 +5,8 @@
 ## Author: Piotr Merski <merskip@gmail.com>
 
 PetFinder.lua
-parse_pet_type.lua
+PetFinder_PetTypeUtils.lua
+PetFinder_FindingPets.lua
 
 PetFinder_Frame.lua
 PetFinder_Frame.xml

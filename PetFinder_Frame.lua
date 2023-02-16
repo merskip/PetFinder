@@ -41,7 +41,7 @@ function PetFinder_FrameMixin:SetSelectedPetType(index, petType)
     UIDropDownMenu_SetSelectedValue(dropdown, petType)
     if petType then
         -- Workaround for https://www.mmo-champion.com/threads/2043081-LUA-UIDropDownMenu-set-selected-value-at-initialization
-        UIDropDownMenu_SetText(dropdown, getPetTypeName(petType))
+        UIDropDownMenu_SetText(dropdown, GetPetTypeName(petType))
     else
         UIDropDownMenu_SetText(dropdown, "")
     end
@@ -63,11 +63,11 @@ function PetFinder_FrameMixin:FindOnClick()
     if petType3 then
         table.insert(opponentPetTypes, petType3)
     end
-    if table.getn(opponentPetTypes) == 0 then
+    if #opponentPetTypes == 0 then
         return
     end
 
-    local result = findOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWithCooldown)
+    local result = FindOwnedPetsAgainstOponentPetTypes(opponentPetTypes, ignoreAibilitesWithCooldown)
     local dataProvider = CreateDataProvider();
     for _, levelResult in ipairs(result) do
         dataProvider:Insert({petLevel = levelResult.petLevel});
@@ -146,5 +146,5 @@ function PetListLevelHeaderTemplate_Init(button, elementData)
 end
 
 function PetListPetTypeHeaderTemplate_Init(button, elementData)
-    button.title:SetText("Pets against " .. getPetTypeName(elementData.petType))
+    button.title:SetText("Pets against " .. GetPetTypeName(elementData.petType))
 end
