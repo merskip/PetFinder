@@ -21,6 +21,15 @@
         </Layers>
     </Frame>
 
+    <Button name="PetFinder_PetListAbilityButtonTemplate" virtual="true">
+        <Size x="32" y="32"/>
+        <Layers>
+            <Layer level="BORDER">
+                <Texture name="$parentIcon" parentKey="icon" setAllPoints="true" file="Interface\Icons\Ability_ThunderClap"/>
+            </Layer>
+        </Layers>
+    </Button>
+
     <Button name="PetFinder_PetListButtonTemplate" virtual="true" mixin="PetListButtonMixin">
         <Size x="208" y="38"/>
         <Layers>
@@ -96,6 +105,37 @@
                         </FontString>
                     </Layer>
                 </Layers>
+            </Button>
+
+            <Button parentKey="ability1" inherits="PetFinder_PetListAbilityButtonTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" x="4" />
+                </Anchors>
+            </Button>
+            <Button parentKey="ability2" inherits="PetFinder_PetListAbilityButtonTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.ability1" relativePoint="RIGHT" x="3" />
+                </Anchors>
+            </Button>
+            <Button parentKey="ability3" inherits="PetFinder_PetListAbilityButtonTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.ability2" relativePoint="RIGHT" x="3" />
+                </Anchors>
+            </Button>
+            <Button parentKey="ability4" inherits="PetFinder_PetListAbilityButtonTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.ability3" relativePoint="RIGHT" x="3" />
+                </Anchors>
+            </Button>
+            <Button parentKey="ability5" inherits="PetFinder_PetListAbilityButtonTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.ability4" relativePoint="RIGHT" x="3" />
+                </Anchors>
+            </Button>
+            <Button parentKey="ability6" inherits="PetFinder_PetListAbilityButtonTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.ability5" relativePoint="RIGHT" x="3" />
+                </Anchors>
             </Button>
         </Frames>
         <HighlightTexture atlas="PetList-ButtonHighlight"/>

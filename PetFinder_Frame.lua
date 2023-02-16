@@ -13,7 +13,7 @@ function PetFinder_FrameMixin:OnLoad()
     self.withoutCooldown:SetChecked(true)
 
     local view = CreateScrollBoxListLinearView();
-    view:SetPadding(16, 16, 0, 4, 4);
+    view:SetPadding(16, 16, 0, 4 + 6 * 32 + (5 * 3) + 4, 4); -- top, bottom, left, right, spacing
     view:SetElementFactory(function(factory, elementData)
         if elementData.petLevel then
             factory("PetFinder_PetListLevelHeaderTemplate", PetListLevelHeaderTemplate_Init);
@@ -21,7 +21,7 @@ function PetFinder_FrameMixin:OnLoad()
             factory("PetFinder_PetListPetTypeHeaderTemplate", PetListPetTypeHeaderTemplate_Init);
         else
             factory("PetFinder_PetListButtonTemplate", function(button, elementData)
-                button:Init(button, elementData)
+                button:Init(elementData)
             end);
         end
     end);
@@ -100,7 +100,7 @@ end
 
 PetListButtonMixin = {};
 
-function PetListButtonMixin:Init(self, pet)
+function PetListButtonMixin:Init(pet)
     self.petID = pet.petID
     self.strongAbilities = pet.strongAbilities
     
@@ -136,6 +136,24 @@ function PetListButtonMixin:Init(self, pet)
         self.isDead:Show();
     else
         self.isDead:Hide();
+    end
+
+    self:InitAbility(1, pet.strongAbilities[1])
+    self:InitAbility(2, pet.strongAbilities[2])
+    self:InitAbility(3, pet.strongAbilities[3])
+    self:InitAbility(4, pet.strongAbilities[4])
+    self:InitAbility(5, pet.strongAbilities[5])
+    self:InitAbility(6, pet.strongAbilities[6])
+end
+
+function PetListButtonMixin:InitAbility(index, abilityID)
+    local abilityButton = self["ability" .. index]
+    if abilityID then
+        abilityButton:SetShown(true)
+        local _, name, icon = C_PetBattles.GetAbilityInfoByID(abilityID)
+        abilityButton.icon:SetTexture(icon)
+    else
+        abilityButton:SetShown(false)
     end
 end
 
