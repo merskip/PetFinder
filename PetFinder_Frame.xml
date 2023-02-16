@@ -21,13 +21,17 @@
         </Layers>
     </Frame>
 
-    <Button name="PetFinder_PetListAbilityButtonTemplate" virtual="true">
+    <Button name="PetFinder_PetListAbilityButtonTemplate" virtual="true" mixin="PetListAbilityButtonMixin">
         <Size x="32" y="32"/>
         <Layers>
             <Layer level="BORDER">
                 <Texture name="$parentIcon" parentKey="icon" setAllPoints="true" file="Interface\Icons\Ability_ThunderClap"/>
             </Layer>
         </Layers>
+        <Scripts>
+            <OnEnter method="OnEnter" />
+            <OnLeave method="OnLeave" />
+        </Scripts>
     </Button>
 
     <Button name="PetFinder_PetListButtonTemplate" virtual="true" mixin="PetListButtonMixin">

@@ -98,13 +98,21 @@ function AddPetTypesToDropdown(dropdownMenu)
     end
 end
 
+function PetListLevelHeaderTemplate_Init(button, elementData)
+    button.title:SetText("Level " .. elementData.petLevel)
+end
+
+function PetListPetTypeHeaderTemplate_Init(button, elementData)
+    button.title:SetText("Pets against " .. GetPetTypeName(elementData.petType))
+end
+
 PetListButtonMixin = {};
 
 function PetListButtonMixin:Init(pet)
     self.petID = pet.petID
     self.strongAbilities = pet.strongAbilities
     
-    local _, customName, level, _, _, _, _, name, icon, petType = C_PetJournal.GetPetInfoByPetID(pet.petID);
+    local speciesID, customName, level, _, _, _, _, name, icon, petType = C_PetJournal.GetPetInfoByPetID(pet.petID);
 
 	if customName then
 		self.name:SetText(customName);
@@ -138,33 +146,34 @@ function PetListButtonMixin:Init(pet)
         self.isDead:Hide();
     end
 
-    self:InitAbility(1, pet.strongAbilities[1])
-    self:InitAbility(2, pet.strongAbilities[2])
-    self:InitAbility(3, pet.strongAbilities[3])
-    self:InitAbility(4, pet.strongAbilities[4])
-    self:InitAbility(5, pet.strongAbilities[5])
-    self:InitAbility(6, pet.strongAbilities[6])
-end
-
-function PetListButtonMixin:InitAbility(index, abilityID)
-    local abilityButton = self["ability" .. index]
-    if abilityID then
-        abilityButton:SetShown(true)
-        local _, name, icon = C_PetBattles.GetAbilityInfoByID(abilityID)
-        abilityButton.icon:SetTexture(icon)
-    else
-        abilityButton:SetShown(false)
-    end
+    self.ability1:Init(pet.petID, pet.strongAbilities[1])
+    self.ability2:Init(pet.petID, pet.strongAbilities[2])
+    self.ability3:Init(pet.petID, pet.strongAbilities[3])
+    self.ability4:Init(pet.petID, pet.strongAbilities[4])
+    self.ability5:Init(pet.petID, pet.strongAbilities[5])
+    self.ability6:Init(pet.petID, pet.strongAbilities[6])
 end
 
 function PetListButtonMixin:OnClick()
     OpenPetJournalWithPetID(self.petID)
 end
 
-function PetListLevelHeaderTemplate_Init(button, elementData)
-    button.title:SetText("Level " .. elementData.petLevel)
+PetListAbilityButtonMixin = {}
+
+function PetListAbilityButtonMixin:Init(petID, abilityID)
+    if abilityID then
+        self:SetShown(true)
+        local _, name, icon = C_PetBattles.GetAbilityInfoByID(abilityID)
+        self.icon:SetTexture(icon)
+    else
+        self:SetShown(false)
+    end
 end
 
-function PetListPetTypeHeaderTemplate_Init(button, elementData)
-    button.title:SetText("Pets against " .. GetPetTypeName(elementData.petType))
+function PetListAbilityButtonMixin:OnEnter()
+    print("PetListAbilityButtonMixin:OnEnter")
+end
+
+function PetListAbilityButtonMixin:OnLeave()
+    print("PetListAbilityButtonMixin:OnLeave")
 end
