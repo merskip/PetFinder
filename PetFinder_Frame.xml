@@ -214,7 +214,8 @@
             </Frame>
         </Frames>
         <Scripts>
-            <OnLoad method="OnLoad"></OnLoad>
+            <OnLoad method="OnLoad" />
+            <OnEvent method="OnEvent" />
             <OnShow>PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)</OnShow>
             <OnHide>PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)</OnHide>
             <OnDragStart>self:StartMoving();</OnDragStart>

@@ -5,6 +5,7 @@ function PetFinder_FrameMixin:OnLoad()
     self:RegisterForDrag("LeftButton");
     tinsert(UISpecialFrames, self:GetName());
     self.withoutCooldown.Text:SetText("Ignore abilities\nwith cooldown")
+    self:RegisterEvent("PET_BATTLE_OPENING_START")
 
     UIDropDownMenu_Initialize(self.petType1, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType2, AddPetTypesToDropdown)
@@ -27,6 +28,12 @@ function PetFinder_FrameMixin:OnLoad()
     end);
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.results.scrollBox, self.results.scrollBar, view);
+end
+
+function PetFinder_FrameMixin:OnEvent(event, ...)
+    if event == "PET_BATTLE_OPENING_START" then
+        print("Type /fp to find strong pets against opponent pets in this pet battle")
+    end
 end
 
 function PetFinder_FrameMixin:ShowWithPetTypes(opponentPetTypes)
