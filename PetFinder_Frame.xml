@@ -36,9 +36,15 @@
 
     <Button name="PetFinder_PetListButtonTemplate" virtual="true" mixin="PetListButtonMixin">
         <Size x="208" y="38"/>
+        
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" atlas="PetList-ButtonBackground"/>
+                <Texture parentKey="background" atlas="PetList-ButtonBackground">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-210"/>
+                    </Anchors>
+                </Texture>
             </Layer>
             <Layer level="BORDER">
                 <Texture parentKey="icon">
@@ -49,7 +55,7 @@
                 </Texture>
                 <Texture parentKey="petTypeIcon">
                     <Anchors>
-                        <Anchor point="BOTTOMRIGHT"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.background"/>
                     </Anchors>
                     <Size x="80" y="38"/>
                     <TexCoords left="0.00781250" right="0.71093750" top="0.74609375" bottom="0.91796875"/>
@@ -113,7 +119,7 @@
 
             <Button parentKey="ability1" inherits="PetFinder_PetListAbilityButtonTemplate">
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="RIGHT" x="4" />
+                    <Anchor point="LEFT" relativeKey="$parent.background" relativePoint="RIGHT" x="4" />
                 </Anchors>
             </Button>
             <Button parentKey="ability2" inherits="PetFinder_PetListAbilityButtonTemplate">
@@ -142,7 +148,12 @@
                 </Anchors>
             </Button>
         </Frames>
-        <HighlightTexture atlas="PetList-ButtonHighlight"/>
+        <HighlightTexture atlas="PetList-ButtonHighlight">
+            <Anchors>
+                <Anchor point="TOPLEFT" relativeKey="$parent.background"/>
+                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.background"/>
+            </Anchors>
+        </HighlightTexture>
         <Scripts>
             <OnClick method="OnClick" />
         </Scripts>

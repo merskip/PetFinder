@@ -14,7 +14,7 @@ function PetFinder_FrameMixin:OnLoad()
     self.withoutCooldown:SetChecked(true)
 
     local view = CreateScrollBoxListLinearView();
-    view:SetPadding(16, 16, 0, 4 + 6 * 32 + (5 * 3) + 4, 4); -- top, bottom, left, right, spacing
+    view:SetPadding(16, 16, 0, 4, 4); -- top, bottom, left, right, spacing
     view:SetElementFactory(function(factory, elementData)
         if elementData.petLevel then
             factory("PetFinder_PetListLevelHeaderTemplate", PetListLevelHeaderTemplate_Init);
