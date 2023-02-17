@@ -8,5 +8,4 @@ PetFinder.lua
 PetFinder_PetTypeUtils.lua
 PetFinder_FindingPets.lua
 
-PetFinder_Frame.lua
 PetFinder_Frame.xml

@@ -6,6 +6,7 @@ function PetFinder_FrameMixin:OnLoad()
     tinsert(UISpecialFrames, self:GetName());
     self.withoutCooldown.Text:SetText("Ignore abilities\nwith cooldown")
     self:RegisterEvent("PET_BATTLE_OPENING_START")
+    self:RegisterEvent("ADDON_LOADED")
 
     UIDropDownMenu_Initialize(self.petType1, AddPetTypesToDropdown)
     UIDropDownMenu_Initialize(self.petType2, AddPetTypesToDropdown)
@@ -33,6 +34,27 @@ end
 function PetFinder_FrameMixin:OnEvent(event, ...)
     if event == "PET_BATTLE_OPENING_START" then
         print("Type /fp to find strong pets against opponent pets in this pet battle")
+    elseif event == "ADDON_LOADED" then
+        local addonName = ...
+        if addonName == "Blizzard_Collections" then
+            self:RegisterPetSelecting()
+        end
+    end
+end
+
+function PetFinder_FrameMixin:RegisterPetSelecting()
+    hooksecurefunc("PetJournal_UpdatePetCard", function()
+        self:ReloadList()
+    end)
+    hooksecurefunc(CollectionsJournal, "Hide", function()
+        self:ReloadList()
+    end)
+end
+
+function PetFinder_FrameMixin:ReloadList()
+    local dataProvider = self.results.scrollBox:GetDataProvider()
+    if dataProvider then
+        self.results.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
     end
 end
 
@@ -152,6 +174,13 @@ function PetListButtonMixin:Init(pet)
     else
         self.isDead:Hide();
     end
+
+    local isPetJournalIsVisible = PetJournal and PetJournal:IsVisible() == true
+	if isPetJournalIsVisible and PetJournalPetCard.petID == pet.petID then
+		self.selectedTexture:Show()
+	else
+		self.selectedTexture:Hide()
+	end
 
     self.ability1:Init(pet.petID, speciesID, pet.strongAbilities[1])
     self.ability2:Init(pet.petID, speciesID, pet.strongAbilities[2])

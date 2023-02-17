@@ -91,7 +91,12 @@
                         <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER"/>
                     </Anchors>
                 </Texture>
-                <Texture atlas="PetList-ButtonSelect" parentKey="selectedTexture" hidden="true"/>
+				<Texture atlas="PetList-ButtonSelect" parentKey="selectedTexture" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.background"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.background"/>
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
         <Frames>
