@@ -146,12 +146,12 @@ function PetListButtonMixin:Init(pet)
         self.isDead:Hide();
     end
 
-    self.ability1:Init(pet.petID, pet.strongAbilities[1])
-    self.ability2:Init(pet.petID, pet.strongAbilities[2])
-    self.ability3:Init(pet.petID, pet.strongAbilities[3])
-    self.ability4:Init(pet.petID, pet.strongAbilities[4])
-    self.ability5:Init(pet.petID, pet.strongAbilities[5])
-    self.ability6:Init(pet.petID, pet.strongAbilities[6])
+    self.ability1:Init(pet.petID, speciesID, pet.strongAbilities[1])
+    self.ability2:Init(pet.petID, speciesID, pet.strongAbilities[2])
+    self.ability3:Init(pet.petID, speciesID, pet.strongAbilities[3])
+    self.ability4:Init(pet.petID, speciesID, pet.strongAbilities[4])
+    self.ability5:Init(pet.petID, speciesID, pet.strongAbilities[5])
+    self.ability6:Init(pet.petID, speciesID, pet.strongAbilities[6])
 end
 
 function PetListButtonMixin:OnClick()
@@ -160,7 +160,7 @@ end
 
 PetListAbilityButtonMixin = {}
 
-function PetListAbilityButtonMixin:Init(petID, abilityID)
+function PetListAbilityButtonMixin:Init(petID, speciesID, abilityID)
     if abilityID then
         self:SetShown(true)
         local _, name, icon = C_PetBattles.GetAbilityInfoByID(abilityID)
@@ -168,12 +168,104 @@ function PetListAbilityButtonMixin:Init(petID, abilityID)
     else
         self:SetShown(false)
     end
+    self.petID = petID
+    self.speciesID = speciesID
+    self.abilityID = abilityID
+end
+
+
+local PET_FINDER_ABILITY_INFO = SharedPetBattleAbilityTooltip_GetInfoTable()
+
+function PET_FINDER_ABILITY_INFO:GetAbilityID()
+	return self.abilityID;
+end
+
+function PET_FINDER_ABILITY_INFO:IsInBattle()
+	return false;
+end
+
+function PET_FINDER_ABILITY_INFO:GetHealth(target)
+	self:EnsureTarget(target)
+	if self.petID then
+		local health, maxHealth, power, speed, rarity = C_PetJournal.GetPetStats(self.petID)
+		return health
+	else
+		return self:GetMaxHealth(target)
+	end
+end
+
+function PET_FINDER_ABILITY_INFO:GetMaxHealth(target)
+	self:EnsureTarget(target)
+	if self.petID then
+		local health, maxHealth, power, speed, rarity = C_PetJournal.GetPetStats(self.petID)
+		return maxHealth
+	else
+		return 100
+	end
+end
+
+function PET_FINDER_ABILITY_INFO:GetAttackStat(target)
+	self:EnsureTarget(target)
+	if self.petID then
+		local health, maxHealth, power, speed, rarity = C_PetJournal.GetPetStats(self.petID)
+		return power
+	else
+		return 0
+	end
+end
+
+function PET_FINDER_ABILITY_INFO:GetSpeedStat(target)
+	self:EnsureTarget(target)
+	if self.petID then
+		local health, maxHealth, power, speed, rarity = C_PetJournal.GetPetStats(self.petID)
+		return speed
+	else
+		return 0;
+	end
+end
+
+function PET_FINDER_ABILITY_INFO:GetPetOwner(target)
+	self:EnsureTarget(target)
+	return Enum.BattlePetOwner.Ally
+end
+
+function PET_FINDER_ABILITY_INFO:GetPetType(target)
+	self:EnsureTarget(target)
+	if ( not self.speciesID ) then
+		GMError("No species id found")
+		return 1
+	end
+	local _, _, petType = C_PetJournal.GetPetInfoBySpeciesID(self.speciesID)
+	return petType
+end
+
+function PET_FINDER_ABILITY_INFO:EnsureTarget(target)
+	if target == "default" then
+		target = "self"
+	elseif target == "affected" then
+		target = "enemy"
+	end
+	if target ~= "self" then
+		GMError("Only \"self\" unit supported out of combat")
+	end
 end
 
 function PetListAbilityButtonMixin:OnEnter()
-    print("PetListAbilityButtonMixin:OnEnter")
+    local abilityInfo = {};
+    setmetatable(abilityInfo, {__index = PET_FINDER_ABILITY_INFO})
+	abilityInfo.abilityID = self.abilityID
+	abilityInfo.speciesID = self.speciesID
+	abilityInfo.petID = self.petID
+
+	PetFinder_AbilityTooltip:ClearAllPoints()
+	PetFinder_AbilityTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 0)
+	PetFinder_AbilityTooltip.anchoredTo = self
+	SharedPetBattleAbilityTooltip_SetAbility(PetFinder_AbilityTooltip, abilityInfo, nil)
+	PetFinder_AbilityTooltip:Show()
 end
 
 function PetListAbilityButtonMixin:OnLeave()
-    print("PetListAbilityButtonMixin:OnLeave")
+    if PetFinder_AbilityTooltip.anchoredTo == self or not self then
+		PetFinder_AbilityTooltip:Hide()
+	end
 end

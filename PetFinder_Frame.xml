@@ -221,4 +221,6 @@
             <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
         </Scripts>
     </Frame>
+
+    <Frame name="PetFinder_AbilityTooltip" inherits="SharedPetBattleAbilityTooltipTemplate"/>
 </Ui>
