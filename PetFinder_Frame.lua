@@ -21,10 +21,12 @@ function PetFinder_FrameMixin:OnLoad()
             factory("PetFinder_PetListLevelHeaderTemplate", PetListLevelHeaderTemplate_Init);
         elseif elementData.petType then
             factory("PetFinder_PetListPetTypeHeaderTemplate", PetListPetTypeHeaderTemplate_Init);
-        else
+        elseif elementData.pet then
             factory("PetFinder_PetListButtonTemplate", function(button, elementData)
-                button:Init(elementData)
+                button:Init(elementData.pet)
             end);
+        else
+            assert(nil, "Unknown element item")
         end
     end);
 
@@ -105,8 +107,8 @@ function PetFinder_FrameMixin:FindOnClick()
         for _, petTypeResult in ipairs(levelResult.opponentPetTypes) do
             dataProvider:Insert({petType = petTypeResult.petType});
 
-            for _, pets in pairs(petTypeResult.pets) do
-		        dataProvider:Insert(pets);
+            for _, pet in pairs(petTypeResult.pets) do
+		        dataProvider:Insert({pet = pet});
             end
         end
     end
