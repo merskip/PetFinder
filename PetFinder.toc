@@ -1,8 +1,9 @@
-## Interface: 100005
+## Interface: 100100
 ## Version: 0.1
 ## Title: Pet Finder
 ## Notes: Addon that helps you find pets to battle
 ## Author: Piotr Merski <merskip@gmail.com>
+## IconTexture: Interface\Icons\petjournalportrait.blp
 
 PetFinder.lua
 PetFinder_PetTypeUtils.lua
