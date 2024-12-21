@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110007
 ## Version: 0.1
 ## Title: Pet Finder
 ## Notes: Addon that helps you find pets to battle
